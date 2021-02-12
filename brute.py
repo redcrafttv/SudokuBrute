@@ -9,6 +9,7 @@
 # Licence:     MIT
 #-------------------------------------------------------------------------------
 import tkinter as tk
+import tkinter.filedialog as fd
 
 root = tk.Tk()
 
@@ -78,26 +79,32 @@ def debug_cmd():
     calculate_possible_values()
 
 def load_cmd():
-    file = open(file="save.txt")
+    file = fd.askopenfile(mode="r")
     line = file.readline()
     x = 1
     y = 1
 
+    #lines = file.readlines()
+    #print(lines)
+    #return
     while not line == "":
-        line = line.replace("\n", "")
-        print(len(line))
-        print(line[1])
+        line = line[:-1]
+        print(line)
+        #print(len(line))
+        #print(line[1])
         #len(line)
-        for char in line:
-            print(str(x) + " " + char)
+        print_spacer()
+        for i in range(len(line)):
+            print(str(x) + " " + line[i])
             #print(y)
             #print(x)
             #print(line(x))
-            if line[x -1] == "x":
-                set_value(row=y, col=x, value="")
+            if line[i] == "x":
+                set_value(row=y, col=x + 1, value="")
             else:
-                set_value(row=y, col=x,  value=line[x - 1])
+                set_value(row=y, col=x + 1,  value=line[i])
             x += 1
+        x = 0
         y += 1
         line = file.readline()
     pass
