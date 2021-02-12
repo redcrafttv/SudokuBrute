@@ -2,11 +2,11 @@
 # Name:        sudokubrute
 # Purpose:     Enumeration of all possible values and finally solving
 #
-# Author:      nikolas.heise
+# Author:      redcrafttv
 #
 # Created:     10/02/2021
-# Copyright:   (c) nikolas.heise 2021
-# Licence:     <your licence>
+# Copyright:   (c) redcrafttv 2021
+# Licence:     MIT
 #-------------------------------------------------------------------------------
 import tkinter as tk
 
