@@ -1,149 +1,82 @@
 #-------------------------------------------------------------------------------
 # Name:        sudokubrute
-# Purpose:     Enumeration of all possible values and finally solving
+# Purpose:
 #
-# Author:      redcrafttv
+# Author:      nikolas.heise
 #
-# Created:     10/02/2021
-# Copyright:   (c) redcrafttv 2021
-# Licence:     MIT
+# Created:     12/05/2021
+# Copyright:   (c) nikolas.heise 2021
+# Licence:     <your licence>
 #-------------------------------------------------------------------------------
-import tkinter as tk
-import tkinter.filedialog as fd
 
-root = tk.Tk()
+class Cell:
+    def __init__(self, x, y, v):
+        self.x = x
+        self.y = y
+        self.value = v
+        if (v == "x"):
+            self.possibles = ["1","2","3","4","5","6","7","8","9"]
+        else:
+            self.possibles = []
 
-ui_grid = []
-debug_btn = None
-
-
-def print_spacer():
-    print("------------------------------------------------------------")
-
-def get_value(row, col):
-    return ui_grid[row - 1][col - 1].get()
-
-def clear_value(row, col):
-    ui_grid[row - 1][col - 1].delete(0, len(get_value(row, col)))
-
-def set_value(row, col, value):
-    clear_value(row, col)
-    ui_grid[row - 1][col - 1].insert(0, value)
-
-def print_values():
-    print_spacer()
-    for i in ui_grid:
-        out_row = []
-        for j in i:
-            out_row.append(j.get())
-        print(out_row)
-    print_spacer()
-
-def get_row(row_index):
-    result = []
-    for cell in ui_grid[row_index - 1]:
-        result.append(cell.get())
-    return result
-
-def get_column(col_index):
-    result = []
-    for row in ui_grid:
-        result.append(row[col_index - 1].get())
-    return result
+field = []
 
 
-
-
-def is_value_possible(row, col, value):
-    if get_row(row).count(value) > 0:
-        return False
-    if get_column(col).count(value) > 0:
-        return False
-    return True
-
-def calculate_possible_values():
-    for i in range(9):
-        for j in range(9):
-            for k in range(9):
-                if is_value_possible(i+1, j+1, str(k+1)):
-                    print(str(i+1) + " " + str(j+1) + " ;" + str(k) + " possible: " + str(is_value_possible(i+1, j+1, str(k+1))))
-
-
-
-
-
-
-
-
-def debug_cmd():
-    calculate_possible_values()
-
-def load_cmd():
-    file = fd.askopenfile(mode="r")
+def load_field():
+    file = open(file="examplepuzzle.txt", mode="r")
     line = file.readline()
-    x = 1
     y = 1
-
-    #lines = file.readlines()
-    #print(lines)
-    #return
     while not line == "":
         line = line[:-1]
-        print(line)
-        #print(len(line))
-        #print(line[1])
-        #len(line)
-        print_spacer()
         for i in range(len(line)):
-            print(str(x) + " " + line[i])
-            #print(y)
-            #print(x)
-            #print(line(x))
-            if line[i] == "x":
-                set_value(row=y, col=x + 1, value="")
-            else:
-                set_value(row=y, col=x + 1,  value=line[i])
-            x += 1
-        x = 0
+            field.append(Cell(i + 1, y, line[i]))
         y += 1
         line = file.readline()
-    pass
-
-def save_cmd():
-    file = open(file="save.txt", mode="w")
-    for i in ui_grid:
-        for j in i:
-            if (not j.get() == ""):
-                file.write(j.get())
-            else:
-                file.write("x")
-        file.write("\n")
-    file.close()
-    pass
-
-def create_ui(root: tk.Tk):
-    for r in range(9):
-        row = []
-        for c in range(9):
-            row.append(tk.Entry(root, width=3))
-            row[c].grid(row=r,column=c)
-        ui_grid.append(row)
-    debug_btn = tk.Button(root, text="Debug", command=debug_cmd)
-    debug_btn.place(x=200, y=3)
-
-    load_btn = tk.Button(root, text="Load", command=load_cmd)
-    load_btn.place(x=200, y=33)
-
-    load_btn = tk.Button(root, text="Save", command=save_cmd)
-    load_btn.place(x=200, y=63)
-
-
-
 
 def main():
-    create_ui(root=root)
-    root.geometry("300x250")
-    root.mainloop()
+    load_field()
+    changes = True
+
+    while changes:
+        changes = False
+
+        # Update possible values
+
+        # Collumns
+        for x in range(9): # für alle neun spalten
+            for cell in field: # überprüfe jede cell im field
+                if cell.x == x+1 and cell.value != "x": # und wenn sie kein value hat und zur spalte gehört
+                    for column_member in field: # suche alle cellen
+                        if column_member.x == x+1: # filter nach spaltenmitglieder
+                            if (column_member.possibles.count(cell.value)):
+                                column_member.possibles.remove(cell.value) # entferne impossible values
+
+
+        # Rows
+        for y in range(9): # für alle neun spalten
+            for cell in field: # überprüfe jede cell im field
+                if cell.y == y+1 and cell.value != "x": # und wenn sie kein value hat und zur spalte gehört
+                    for row_member in field: # suche alle cellen
+                        if row_member.y == y+1: # filter nach spaltenmitglieder
+                            if (row_member.possibles.count(cell.value)):
+                                row_member.possibles.remove(cell.value) # entferne impossible values
+
+        # check possible values of every cell
+        for cell in field:
+            if(len(cell.possibles) == 1):
+                cell.value = cell.possibles[0]
+                cell.possibles = []
+                changes = True
+        continue
+
+
+    # print result
+    for y in range(9):
+        result_row = []
+        for cell in field:
+            if cell.y == y+1:
+                result_row.append(cell.value)
+        print(result_row)
 
 
 if __name__ == '__main__':
