@@ -4,3 +4,5 @@ Sudoku bruteforce solver mini application with file input. Works by determining 
 !!!IMPORTANT!!! This project is Work in progress and rolling-release. This means that it may or may not work depending on the time you check.
 
 Code contributions are welcome
+
+Next thing im going to do is: make this an executable with an interface for easier usage. also im going to start not only looking at collumns and rows but also at blocks
